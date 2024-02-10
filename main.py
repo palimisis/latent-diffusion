@@ -326,9 +326,10 @@ class ImageLogger(Callback):
       grid = (grid + 1.0) / 2.0  # -1,1 -> 0,1; c,h,w
 
       tag = f"{split}/{k}"
-      pl_module.logger.experiment.add_image(
-          tag, grid,
-          global_step=pl_module.global_step)
+      
+      # pl_module.logger.experiment.add_image(
+      #     tag, grid,
+      #     global_step=pl_module.global_step)
 
   @rank_zero_only
   def log_local(self, save_dir, split, images,
@@ -412,12 +413,12 @@ class CUDACallback(Callback):
   def on_train_epoch_start(self, trainer, pl_module):
     # Reset the memory use counter
     torch.cuda.reset_peak_memory_stats(trainer.strategy.root_device.index)
-    torch.cuda.synchronize(trainer.root_gpu)
+    torch.cuda.synchronize(trainer.strategy.root_device.index)
     self.start_time = time.time()
 
   def on_train_epoch_end(self, trainer, pl_module, outputs):
-    torch.cuda.synchronize(trainer.root_gpu)
-    max_memory = torch.cuda.max_memory_allocated(trainer.root_gpu) / 2 ** 20
+    torch.cuda.synchronize(trainer.strategy.root_device.index)
+    max_memory = torch.cuda.max_memory_allocated(trainer.strategy.root_device.index) / 2 ** 20
     epoch_time = time.time() - self.start_time
 
     try:
@@ -635,9 +636,9 @@ if __name__ == "__main__":
                 # "log_momentum": True
             }
         },
-        # "cuda_callback": {
-        #     "target": "main.CUDACallback"
-        # },
+        "cuda_callback": {
+            "target": "main.CUDACallback"
+        },
     }
     if version.parse(pl.__version__) >= version.parse('1.4.0'):
       default_callbacks_cfg.update({'checkpoint_callback': modelckpt_cfg})
