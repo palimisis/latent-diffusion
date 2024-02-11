@@ -30,12 +30,12 @@ data:
     batch_size: 1
     wrap: True
     train:
-      target: ldm.data.imagenet.ImageNetSRTrain
+      target: ldm.data.sixray.SixRayTrainD
       params:
         size: 256
         degradation: pil_nearest
     validation:
-      target: ldm.data.imagenet.ImageNetSRValidation
+      target: ldm.data.sixray.SixRayValidationD
       params:
         size: 256
         degradation: pil_nearest

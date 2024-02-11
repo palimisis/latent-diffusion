@@ -3,3 +3,4 @@ logs
 taming
 slurm-*
 .err
+*.ipynb
