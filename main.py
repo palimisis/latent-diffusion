@@ -326,7 +326,7 @@ class ImageLogger(Callback):
       grid = (grid + 1.0) / 2.0  # -1,1 -> 0,1; c,h,w
 
       tag = f"{split}/{k}"
-      
+
       # pl_module.logger.experiment.add_image(
       #     tag, grid,
       #     global_step=pl_module.global_step)
@@ -418,7 +418,8 @@ class CUDACallback(Callback):
 
   def on_train_epoch_end(self, trainer, pl_module, outputs=None):
     torch.cuda.synchronize(trainer.strategy.root_device.index)
-    max_memory = torch.cuda.max_memory_allocated(trainer.strategy.root_device.index) / 2 ** 20
+    max_memory = torch.cuda.max_memory_allocated(
+        trainer.strategy.root_device.index) / 2 ** 20
     epoch_time = time.time() - self.start_time
 
     try:

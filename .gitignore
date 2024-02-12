@@ -4,3 +4,8 @@ taming
 slurm-*
 .err
 *.ipynb
+logs
+remotes
+panagiotis
+*.ckpt
+*.zip

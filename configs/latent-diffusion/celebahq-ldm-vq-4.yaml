@@ -64,11 +64,11 @@ data:
     num_workers: 5
     wrap: false
     train:
-      target: taming.data.faceshq.CelebAHQTrain
+      target: ldm.data.sixray.SixRayTrainD
       params:
         size: 256
     validation:
-      target: taming.data.faceshq.CelebAHQValidation
+      target: ldm.data.sixray.SixRayValidationD
       params:
         size: 256
 

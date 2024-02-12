@@ -10,7 +10,7 @@ model:
     first_stage_key: image
     cond_stage_key: class_label
     image_size: 32
-    channels: 4
+    channels: 3
     cond_stage_trainable: true
     conditioning_key: crossattn
     monitor: val/loss_simple_ema
@@ -18,8 +18,8 @@ model:
       target: ldm.modules.diffusionmodules.openaimodel.UNetModel
       params:
         image_size: 32
-        in_channels: 4
-        out_channels: 4
+        in_channels: 3
+        out_channels: 3
         model_channels: 256
         attention_resolutions:
         #note: this isn\t actually the resolution but
@@ -39,29 +39,28 @@ model:
         transformer_depth: 1
         context_dim: 512
     first_stage_config:
-      target: ldm.models.autoencoder.VQModelInterface
+      target: ldm.models.autoencoder.AutoencoderKL
       params:
-        embed_dim: 4
-        n_embed: 16384
-        ckpt_path: configs/first_stage_models/vq-f8/model.yaml
+        monitor: "val/rec_loss"
+        embed_dim: 3
+        lossconfig:
+          target: ldm.modules.losses.LPIPSWithDiscriminator
+          params:
+            disc_start: 50001
+            kl_weight: 0.000001
+            disc_weight: 0.5
+
         ddconfig:
-          double_z: false
-          z_channels: 4
+          double_z: True
+          z_channels: 3
           resolution: 256
           in_channels: 3
           out_ch: 3
           ch: 128
-          ch_mult:
-          - 1
-          - 2
-          - 2
-          - 4
+          ch_mult: [ 1,2,4 ]  # num_down = len(ch_mult)-1
           num_res_blocks: 2
-          attn_resolutions:
-          - 32
+          attn_resolutions: [ ]
           dropout: 0.0
-        lossconfig:
-          target: torch.nn.Identity
     cond_stage_config:
       target: ldm.modules.encoders.modules.ClassEmbedder
       params:
@@ -70,19 +69,19 @@ model:
 data:
   target: main.DataModuleFromConfig
   params:
-    batch_size: 64
+    batch_size: 1
     num_workers: 12
     wrap: false
     train:
-      target: ldm.data.imagenet.ImageNetTrain
+      target: ldm.data.sixray.SixRayTrainD
       params:
-        config:
           size: 256
+          degradation: pil_nearest
     validation:
-      target: ldm.data.imagenet.ImageNetValidation
+      target: ldm.data.sixray.SixRayValidationD
       params:
-        config:
           size: 256
+          degradation: pil_nearest
 
 
 lightning:

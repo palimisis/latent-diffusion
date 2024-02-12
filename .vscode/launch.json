@@ -5,14 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "training",
+            "name": "vae training",
             "type": "debugpy",
             "request": "launch",
             "program": "/home/panagiotisa/repos/latent-diffusion/main.py",
             "console": "integratedTerminal",
             "args": [
                 "--base", "configs/autoencoder/autoencoder_kl_64x64x3.yaml",
-                "--train"
+                "--train",
+                "--logdir", "panagiotis",
+                "--resume", "models/first_stage_models/vq-f4/model.ckpt"
+            ]
+        },
+        {
+            "name": "ldm training",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/panagiotisa/repos/latent-diffusion/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--base", "configs/latent-diffusion/cin-ldm-vq-f8.yaml",
+                "--train",
             ]
         }
     ]
