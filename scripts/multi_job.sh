@@ -21,7 +21,7 @@
 
 N_STEPS=30
 EPOCHS_PER_STEP=1
-EXP_NAME="train_ldm"
+EXP_NAME="vae"
 CHK_PREFIX="/home/$(whoami)/experiments/${EXP_NAME}"
 DATE=`date +"%s"`
 LOGDIR="${CHK_PREFIX}/${DATE}/logs"
@@ -35,14 +35,13 @@ STDOUT="${LOGDIR}/$jid"
 if [ -z $1 ]; then
     CHK_FILE="${CHK_PREFIX}/${DATE}"
     CHK_EPOCHS="${CHK_PREFIX}/${DATE}/${CHK_NAME}"
-    sbatch -J $jid -o "${STDOUT}.out" -e "${STDOUT}.err" /home/it21902/latent-diffusion/scripts/job.sh --base configs/autoencoder/autoencoder_kl_64x64x3.yaml -t --gpus 0, --resume /home/it21902/latent-diffusion/logs/2024-02-11T15-49-40_autoencoder_kl_64x64x3/checkpoints/last.ckpt
+    sbatch -J $jid -o "${STDOUT}.out" -e "${STDOUT}.err" /home/it21902/latent-diffusion/scripts/job.sh --base configs/autoencoder/autoencoder_sixray_kl_64x64x3.yaml -t --gpus 0, --resume /home/it21902/latent-diffusion/logs/2024-02-13T21-35-32_autoencoder_sixray_kl_64x64x3
     echo $EPOCHS_PER_STEP > ${CHK_EPOCHS}.numepochs
 else
-    echo "Got into else"
     CHK_FILE=$1
     epochs=`cat ${CHK_EPOCHS}.numepochs`
     tot_epochs=$epochs+$EPOCHS_PER_STEP
-    sbatch -J $jid -o "${STDOUT}.out" -e "${STDOUT}.err" /home/it21902/latent-diffusion/scripts/job.sh --base configs/autoencoder/autoencoder_kl_64x64x3.yaml -t --gpus 0, --resume /home/it21902/latent-diffusion/logs/2024-02-11T15-49-40_autoencoder_kl_64x64x3/checkpoints/last.ckpt
+    sbatch -J $jid -o "${STDOUT}.out" -e "${STDOUT}.err" /home/it21902/latent-diffusion/scripts/job.sh --base configs/autoencoder/autoencoder_sixray_kl_64x64x3.yaml -t --gpus 0, --resume /home/it21902/latent-diffusion/logs/2024-02-13T21-35-32_autoencoder_sixray_kl_64x64x3
     echo $tot_epochs > ${CHK_EPOCHS}.numepochs
 fi
 
@@ -54,7 +53,7 @@ for ((i=1; i<${N_STEPS}; i++)); do
     jid=${EXP_NAME}_$i
     STDOUT="${LOGDIR}/$jid"
     depends=$(squeue --noheader --format %i --name ${EXP_NAME}_${d})
-    sbatch -J $jid -o "${STDOUT}.out" -e "${STDOUT}.err" -d afterany:${depends} /home/it21902/latent-diffusion/scripts/job.sh --base configs/autoencoder/autoencoder_kl_64x64x3.yaml -t --gpus 0, --resume /home/it21902/latent-diffusion/logs/2024-02-11T15-49-40_autoencoder_kl_64x64x3/checkpoints/last.ckpt 
+    sbatch -J $jid -o "${STDOUT}.out" -e "${STDOUT}.err" -d afterany:${depends} /home/it21902/latent-diffusion/scripts/job.sh --base configs/autoencoder/autoencoder_sixray_kl_64x64x3.yaml -t --gpus 0, --resume /home/it21902/latent-diffusion/logs/2024-02-13T21-35-32_autoencoder_sixray_kl_64x64x3 
     echo $tot_epochs > ${CHK_EPOCHS}.numepochs
 done
 
