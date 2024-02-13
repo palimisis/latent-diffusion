@@ -21,7 +21,7 @@
 
 N_STEPS=30
 EPOCHS_PER_STEP=1
-EXP_NAME="hf_ddpm"
+EXP_NAME="train_ldm"
 CHK_PREFIX="/home/$(whoami)/experiments/${EXP_NAME}"
 DATE=`date +"%s"`
 LOGDIR="${CHK_PREFIX}/${DATE}/logs"

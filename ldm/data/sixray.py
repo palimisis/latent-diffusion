@@ -396,7 +396,7 @@ class SixRayTrainD(SixRay):
   def get_base(self):
     # TODO: dynamically load it
     dset = SixRayTrain(process_images=False,
-                       data_root="/home/panagiotisa/datasets/sixray", is_train=True)
+                       data_root="/home/it21902/datasets/sixray", is_train=True)
     return dset
     # return Subset(dset)
 
@@ -407,6 +407,6 @@ class SixRayValidationD(SixRay):
 
   def get_base(self):
     dset = SixRayValidation(process_images=False,
-                            data_root="/home/panagiotisa/datasets/sixray", is_train=False)  # TODO: dynamically load it
+                            data_root="/home/it21902/datasets/sixray", is_train=False)  # TODO: dynamically load it
     return dset
     # return Subset(dset)

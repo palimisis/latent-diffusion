@@ -27,7 +27,7 @@ model:
 data:
   target: main.DataModuleFromConfig
   params:
-    batch_size: 1
+    batch_size: 16
     wrap: True
     train:
       target: ldm.data.sixray.SixRayTrainD

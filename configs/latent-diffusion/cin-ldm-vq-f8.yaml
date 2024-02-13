@@ -42,6 +42,7 @@ model:
       target: ldm.models.autoencoder.AutoencoderKL
       params:
         monitor: "val/rec_loss"
+        ckpt_path: "logs/2024-02-11T15-49-40_autoencoder_kl_64x64x3/checkpoints/last.ckpt"
         embed_dim: 3
         lossconfig:
           target: ldm.modules.losses.LPIPSWithDiscriminator
@@ -69,7 +70,7 @@ model:
 data:
   target: main.DataModuleFromConfig
   params:
-    batch_size: 1
+    batch_size: 2
     num_workers: 12
     wrap: false
     train:
@@ -95,3 +96,4 @@ lightning:
 
   trainer:
     benchmark: True
+    limit_train_batches: 1

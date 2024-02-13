@@ -9,7 +9,7 @@ set -e
 # source /home/$USER/minicoda3/etc/profile.d/conda.sh
 source ~/miniconda3/etc/profile.d/conda.sh
 conda init bash
-conda activate pt
+conda activate ldm
 
 
 python3 /home/it21902/latent-diffusion/main.py $@
