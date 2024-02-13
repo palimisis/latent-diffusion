@@ -430,6 +430,9 @@ class CUDACallback(Callback):
       rank_zero_info(f"Average Peak memory {max_memory:.2f}MiB")
     except AttributeError:
       pass
+    finally:
+      # Stop the process because of the 3hours slurm limitation
+      sys.exit()
 
 
 if __name__ == "__main__":
@@ -504,6 +507,7 @@ if __name__ == "__main__":
       assert os.path.isdir(opt.resume), opt.resume
       logdir = opt.resume.rstrip("/")
       ckpt = os.path.join(logdir, "checkpoints", "last.ckpt")
+      # checkpoint = torch.load(ckpt)
 
     opt.resume_from_checkpoint = ckpt
     base_configs = sorted(glob.glob(os.path.join(logdir, "configs/*.yaml")))
@@ -559,22 +563,23 @@ if __name__ == "__main__":
         "wandb": {
             "target": "pytorch_lightning.loggers.WandbLogger",
             "params": {
+                "project": "LDM",
                 "name": nowname,
                 "save_dir": logdir,
                 "offline": opt.debug,
                 "id": nowname,
             }
         },
-        "testtube": {
-            # "target": "pytorch_lightning.loggers.TestTubeLogger",
-            "target": "pytorch_lightning.loggers.CSVLogger",
-            "params": {
-                "name": "testtube",
-                "save_dir": logdir,
-            }
-        },
+        # "testtube": {
+        #     # "target": "pytorch_lightning.loggers.TestTubeLogger",
+        #     "target": "pytorch_lightning.loggers.CSVLogger",
+        #     "params": {
+        #         "name": "testtube",
+        #         "save_dir": logdir,
+        #     }
+        # },
     }
-    default_logger_cfg = default_logger_cfgs["testtube"]
+    default_logger_cfg = default_logger_cfgs["wandb"]
     if "logger" in lightning_config:
       logger_cfg = lightning_config.logger
     else:

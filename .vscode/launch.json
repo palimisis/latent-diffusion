@@ -11,10 +11,9 @@
             "program": "/home/panagiotisa/repos/latent-diffusion/main.py",
             "console": "integratedTerminal",
             "args": [
-                "--base", "configs/autoencoder/autoencoder_kl_64x64x3.yaml",
+                "--base", "configs/autoencoder/autoencoder_sixray_kl_64x64x3.yaml",
                 "--train",
-                "--logdir", "panagiotis",
-                "--resume", "models/first_stage_models/vq-f4/model.ckpt"
+                "--resume", "logs/2024-02-13T21-04-21_autoencoder_sixray_kl_64x64x3"
             ]
         },
         {

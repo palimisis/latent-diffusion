@@ -22,6 +22,8 @@ from taming.data.imagenet import ImagePaths
 from ldm.modules.image_degradation import degradation_fn_bsr, degradation_fn_bsr_light
 
 import pandas as pd
+import os
+import pwd
 
 
 def synset2idx(path_to_yaml="data/index_synset.yaml"):
@@ -394,9 +396,9 @@ class SixRayTrainD(SixRay):
     super().__init__(**kwargs)
 
   def get_base(self):
-    # TODO: dynamically load it
+
     dset = SixRayTrain(process_images=False,
-                       data_root="/home/it21902/datasets/sixray", is_train=True)
+                       data_root=f"/home/{pwd.getpwuid(os.getuid())[0]}/datasets/sixray", is_train=True)
     return dset
     # return Subset(dset)
 
@@ -407,6 +409,6 @@ class SixRayValidationD(SixRay):
 
   def get_base(self):
     dset = SixRayValidation(process_images=False,
-                            data_root="/home/it21902/datasets/sixray", is_train=False)  # TODO: dynamically load it
+                            data_root=f"/home/{pwd.getpwuid(os.getuid())[0]}/datasets/sixray", is_train=False)  
     return dset
     # return Subset(dset)
