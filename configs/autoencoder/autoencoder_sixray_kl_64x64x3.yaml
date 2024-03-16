@@ -2,13 +2,14 @@ model:
   base_learning_rate: 4.5e-6
   target: ldm.models.autoencoder.AutoencoderKL
   params:
+    ckpt_path: "models/first_stage_models/kl-f4/model.ckpt"
     monitor: "val/rec_loss"
     embed_dim: 3
     lossconfig:
       target: ldm.modules.losses.LPIPSWithDiscriminator
       params:
         disc_start: 50001
-        kl_weight: 0.000001
+        kl_weight: 1.0e-06
         disc_weight: 0.5
 
     ddconfig:
@@ -18,7 +19,10 @@ model:
       in_channels: 3
       out_ch: 3
       ch: 128
-      ch_mult: [ 1, 2, 2, 4 ]  # num_down = len(ch_mult)-1
+      ch_mult:
+      - 1
+      - 2
+      - 4
       num_res_blocks: 2
       attn_resolutions: [ ]
       dropout: 0.0
@@ -27,17 +31,23 @@ model:
 data:
   target: main.DataModuleFromConfig
   params:
-    batch_size: 1
+    batch_size: 2
     wrap: True
     train:
-      target: ldm.data.sixray.SixRayTrainD
+      target: ldm.data.sixray.SixRay
       params:
+        data_type: train
         size: 256
+        csv_path: SimpleClassification/data.csv
+        root_dir: JPEGImage
         degradation: pil_nearest
     validation:
-      target: ldm.data.sixray.SixRayValidationD
+      target: ldm.data.sixray.SixRay
       params:
+        data_type: val
         size: 256
+        csv_path: SimpleClassification/data.csv
+        root_dir: JPEGImage
         degradation: pil_nearest
 
 lightning:

@@ -20,7 +20,7 @@ from PIL import Image
 from pytorch_lightning import seed_everything
 from pytorch_lightning.trainer import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint, Callback, LearningRateMonitor
-from pytorch_lightning.utilities.distributed import rank_zero_only
+from pytorch_lightning.utilities.rank_zero import rank_zero_only
 from pytorch_lightning.utilities import rank_zero_info
 
 from ldm.data.base import Txt2ImgIterableBaseDataset
@@ -412,12 +412,12 @@ class CUDACallback(Callback):
   # see https://github.com/SeanNaren/minGPT/blob/master/mingpt/callback.py
   def on_train_epoch_start(self, trainer, pl_module):
     # Reset the memory use counter
-    torch.cuda.reset_peak_memory_stats(trainer.root_gpu)
-    torch.cuda.synchronize(trainer.root_gpu)
+    torch.cuda.reset_peak_memory_stats(trainer.strategy.root_device.index)
+    torch.cuda.synchronize(trainer.strategy.root_device.index)
     self.start_time = time.time()
 
   def on_train_epoch_end(self, trainer, pl_module, outputs=None):
-    torch.cuda.synchronize(trainer.root_gpu)
+    torch.cuda.synchronize(trainer.strategy.root_device.index)
     max_memory = torch.cuda.max_memory_allocated(
         trainer.root_gpu) / 2 ** 20
     epoch_time = time.time() - self.start_time
@@ -570,6 +570,13 @@ if __name__ == "__main__":
                 "id": nowname,
             }
         },
+        "tensorboard": {
+            "target": "pytorch_lightning.loggers.TensorBoardLogger",
+            "params": {
+                "name": nowname,
+                "save_dir": logdir,
+            }
+        },
         # "testtube": {
         #     # "target": "pytorch_lightning.loggers.TestTubeLogger",
         #     "target": "pytorch_lightning.loggers.CSVLogger",
@@ -579,7 +586,7 @@ if __name__ == "__main__":
         #     }
         # },
     }
-    default_logger_cfg = default_logger_cfgs["wandb"]
+    default_logger_cfg = default_logger_cfgs["tensorboard"]
     if "logger" in lightning_config:
       logger_cfg = lightning_config.logger
     else:
@@ -691,6 +698,7 @@ if __name__ == "__main__":
     # lightning still takes care of proper multiprocessing though
     data.prepare_data()
     data.setup()
+
     print("#### Data #####")
     for k in data.datasets:
       print(
