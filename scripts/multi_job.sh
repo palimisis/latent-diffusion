@@ -19,7 +19,7 @@
 # train my model for 3 epochs each run, I will set:
 # N_STEPS = 10 , EPOCHS_PER_STEP=3
 
-N_STEPS=30
+N_STEPS=1
 EPOCHS_PER_STEP=1
 EXP_NAME="vae"
 CHK_PREFIX="/home/$(whoami)/experiments/${EXP_NAME}"
