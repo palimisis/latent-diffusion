@@ -490,6 +490,9 @@ class SixRay(Dataset):
     img_path = os.path.join(self.root_dir, self.data.iloc[idx, 0])
     image = Image.open(img_path)
 
+    label = self.data.iloc[idx, 2]
+    label = torch.tensor(self.class_to_idx[label], dtype=torch.long)
+
     if not image.mode == "RGB":
       image = image.convert("RGB")
 
@@ -523,6 +526,7 @@ class SixRay(Dataset):
 
     example["image"] = (image/127.5 - 1.0).astype(np.float32)
     example["LR_image"] = (LR_image/127.5 - 1.0).astype(np.float32)
+    example["class_label"] = label
 
     return example
 
