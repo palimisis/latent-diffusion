@@ -1,0 +1,107 @@
+model:
+  base_learning_rate: 2.0e-06
+  target: ldm.models.diffusion.ddpm.LatentDiffusion
+  params:
+    linear_start: 0.0015
+    linear_end: 0.0195
+    num_timesteps_cond: 1
+    log_every_t: 200
+    timesteps: 1000
+    first_stage_key: image
+    cond_stage_key: class_label
+    conditioning_key: crossattn
+    cond_stage_trainable: True
+    image_size: 64
+    channels: 3
+    monitor: val/loss_simple_ema
+    unet_config:
+      target: ldm.modules.diffusionmodules.openaimodel.UNetModel
+      params:
+        image_size: 64
+        in_channels: 3
+        out_channels: 3
+        model_channels: 224
+        attention_resolutions:
+        # note: this isn\t actually the resolution but
+        # the downsampling factor, i.e. this corresnponds to
+        # attention on spatial resolution 8,16,32, as the
+        # spatial reolution of the latents is 64 for f4
+        - 8
+        - 4
+        - 2
+        num_res_blocks: 2
+        channel_mult:
+        - 1
+        - 2
+        - 3
+        - 4
+        num_head_channels: 32
+    first_stage_config:
+      target: ldm.models.autoencoder.AutoencoderKL
+      params:
+        ckpt_path: "/home/it21902/latent-diffusion/logs/2024-03-17T18-56-01_autoencoder_sixray_kl_64x64x3/checkpoints/last.ckpt"
+        monitor: "val/rec_loss"
+        embed_dim: 3
+        lossconfig:
+          target: ldm.modules.losses.LPIPSWithDiscriminator
+          params:
+            disc_start: 50001
+            kl_weight: 1.0e-06
+            disc_weight: 0.5
+
+        ddconfig:
+          double_z: True
+          z_channels: 3
+          resolution: 256
+          in_channels: 3
+          out_ch: 3
+          ch: 128
+          ch_mult:
+          - 1
+          - 2
+          - 4
+          num_res_blocks: 2
+          attn_resolutions: [ ]
+          dropout: 0.0
+    cond_stage_config:
+      target: ldm.modules.encoders.modules.ClassEmbedder
+      params:
+        embed_dim: 512
+        key: class_label
+        n_classes: 6
+
+
+data:
+  target: main.DataModuleFromConfig
+  params:
+    batch_size: 2
+    wrap: True
+    train:
+      target: ldm.data.sixray.SixRay
+      params:
+        data_type: train
+        size: 256
+        csv_path: SimpleClassification/data.csv
+        root_dir: JPEGImage
+        degradation: pil_nearest
+    validation:
+      target: ldm.data.sixray.SixRay
+      params:
+        data_type: val
+        size: 256
+        csv_path: SimpleClassification/data.csv
+        root_dir: JPEGImage
+        degradation: pil_nearest
+
+
+lightning:
+  callbacks:
+    image_logger:
+      target: main.ImageLogger
+      params:
+        batch_frequency: 5000
+        max_images: 8
+        increase_log_steps: False
+
+  trainer:
+    benchmark: True
