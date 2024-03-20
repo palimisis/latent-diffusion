@@ -432,7 +432,8 @@ class SixRay(Dataset):
     self.data = self.data[self.data['subset'] == data_type]
 
     self.classes = ["Gun", "Knife", "Wrench", "Pliers", "Scissors", "Negative"]
-    self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}
+    self.class_to_idx = {cls_name: idx for idx, cls_name in enumerate(self.classes)}    
+    self.idx_to_human = {idx: cls_name for idx, cls_name in enumerate(self.classes)}
 
     if not transform:
       self.transform = transforms.Compose([transforms.Resize((size, size)),
@@ -527,6 +528,8 @@ class SixRay(Dataset):
     example["image"] = (image/127.5 - 1.0).astype(np.float32)
     example["LR_image"] = (LR_image/127.5 - 1.0).astype(np.float32)
     example["class_label"] = label
+    example["human_label"] = self.idx_to_human[label]
+    
 
     return example
 
