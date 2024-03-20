@@ -528,7 +528,7 @@ class SixRay(Dataset):
     example["image"] = (image/127.5 - 1.0).astype(np.float32)
     example["LR_image"] = (LR_image/127.5 - 1.0).astype(np.float32)
     example["class_label"] = label
-    example["human_label"] = self.idx_to_human[label]
+    example["human_label"] = self.idx_to_human[label.item()]
     
 
     return example
