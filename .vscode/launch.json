@@ -23,7 +23,7 @@
             "program": "/home/panagiotisa/repos/latent-diffusion/main.py",
             "console": "integratedTerminal",
             "args": [
-                "--base", "configs/latent-diffusion/cin-ldm-vq-f8.yaml",
+                "--base", "configs/latent-diffusion/sixray.yaml",
                 "--train",
             ]
         }
