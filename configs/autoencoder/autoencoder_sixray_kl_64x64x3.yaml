@@ -38,16 +38,16 @@ data:
       params:
         data_type: train
         size: 256
-        csv_path: SimpleClassification/data.csv
-        root_dir: JPEGImage
+        csv_path: /home/it21902/datasets/sixray/SimpleClassification/data.csv
+        root_dir: /home/it21902/datasets/sixray/JPEGImage
         degradation: pil_nearest
     validation:
       target: ldm.data.sixray.SixRay
       params:
         data_type: val
         size: 256
-        csv_path: SimpleClassification/data.csv
-        root_dir: JPEGImage
+        csv_path: /home/it21902/datasets/sixray/SimpleClassification/data.csv
+        root_dir: /home/it21902/datasets/sixray/JPEGImage
         degradation: pil_nearest
 
 lightning:

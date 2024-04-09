@@ -19,9 +19,9 @@
 # train my model for 3 epochs each run, I will set:
 # N_STEPS = 10 , EPOCHS_PER_STEP=3
 
-N_STEPS=1
+N_STEPS=10
 EPOCHS_PER_STEP=20
-EXP_NAME="vae"
+EXP_NAME="ldm"
 CHK_PREFIX="/home/$(whoami)/experiments/${EXP_NAME}"
 DATE=`date +"%s"`
 LOGDIR="${CHK_PREFIX}/${DATE}/logs"
