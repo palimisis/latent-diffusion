@@ -21,7 +21,9 @@ def load_class_labels(filename):
         data = yaml.safe_load(file)
     return {value: int(key) for key, value in data.items()}
 
-
+def get_class_by_idx(idx):
+    classes = ["Gun", "Knife", "Wrench", "Pliers", "Scissors", "Negative"]
+    return classes[idx]
 
 
 def custom_to_pil(x):
@@ -363,7 +365,7 @@ if __name__ == "__main__":
     print(f"global step: {global_step}")
     print(75 * "=")
     print("logging to:")
-    logdir = os.path.join(logdir, "samples", f"{global_step:08}", now)
+    logdir = os.path.join(logdir, "samples", f"{global_step:08}", get_class_by_idx(opt.n_class))
     imglogdir = os.path.join(logdir, "img")
     numpylogdir = os.path.join(logdir, "numpy")
 
